@@ -115,13 +115,17 @@ def tobs():
    
 
 # Create a route that when given the start date only, returns the minimum, average, and maximum temperature observed for all dates greater than or equal to the start date entered by a user
+# Define function, set start and end dates entered by user as parameters for start_end_date decorator
+
 @app.route("/api/v1.0/<start>")
 @app.route("/api/v1.0/<start>/<end>")
 def start_end(start, end):
     
     session = Session(engine)
     
+    """Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start date."""
     # if both start and end date
+    
     if end != None:
         spec_date = session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).\
         filter(measurement.date >= start).filter(measurement.date <= end).all()
@@ -144,32 +148,6 @@ def start_end(start, end):
         min_max_avg_results.append(min_max_avg_dict)
     
     return jsonify(min_max_avg_results)
-
-
-
-
-
-
-
-# # Define function, set start and end dates entered by user as parameters for start_end_date decorator
-# @app.route("/api/v1.0/<start>")
-# @app.route("/api/v1.0/<start>/<end>")
-# def start_end(start, end):
-#     # return (
-#     # f"start {start}<br/>"
-#     # f"end {end}<br/>"
-#     #  )
-#     session = Session(engine)
-#     session.query(measurement.date, measurement.prcp)\
-#         .filter(measurement.date >= start)\
-#         .filter(measurement.date <= end)\
-#         .order_by(measurement.date.desc())\
-#         .all()
-
-#     session.close()
-
-
-
-
+    
 if __name__ == '__main__':
     app.run(debug=True)
